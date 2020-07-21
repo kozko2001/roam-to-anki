@@ -3,36 +3,47 @@ package net.allocsoc.roam2anki
 import android.content.Context
 import android.util.Log
 import com.ichi2.anki.api.AddContentApi
+import java.time.Instant
+import java.time.format.DateTimeFormatter
 
 class Anki(context: Context) {
     val api: AddContentApi = AddContentApi(context);
-    val deckId: Long?
 
-    init {
-        val hasDeck = api.deckList.values.contains("ROAM");
+    fun execute(deck: AnkiJson) {
+
+        deck.decks.forEach {
+            val deckId = createDeckIfNotExist(it.name)
+            val modelId = api.modelList.filterValues { it == "Cloze" }.keys.firstOrNull()
+
+            if (modelId != null) {
+                val fields = api.getFieldList(modelId)
+
+                it.cards.forEach {
+                    val card = it
+                    val values = fields.asList().map {
+                        if(it.toUpperCase() == "TEXT") {
+                            card.text
+                        } else {
+                            ""
+                        }
+                    }.toTypedArray()
+
+                    api.addNote(modelId, deckId, values, setOf());
+                }
+            }
+
+        }
+    }
+
+    private fun createDeckIfNotExist(deckname: String): Long {
+        val hasDeck = api.deckList.values.contains(deckname);
 
 
         if (!hasDeck) {
-            api.addNewDeck("ROAM")
+            api.addNewDeck(deckname)
         }
 
-        deckId = api.deckList.filterValues{ it == "ROAM" }.keys.toList().firstOrNull()
-    }
-
-    fun getModels() {
-        api.modelList.values.forEach { Log.e("ANKI", it) }
-
-
-        api.modelList.forEach { id, name ->
-            val fields = api.getFieldList(id);
-            Log.e("ANKI", "id ${id} ${name} ${fields} ")
-        }
-
-        val modelId = api.modelList.filterValues { it == "Cloze" }.keys.firstOrNull()
-
-        if (modelId != null && deckId != null) {
-            api.addNote(modelId, deckId, arrayOf("test 1 2 3 {{c1::Atlanta}}"), setOf());
-        }
+        return api.deckList.filterValues{ it == deckname }.keys.toList().firstOrNull()!!
     }
 
 

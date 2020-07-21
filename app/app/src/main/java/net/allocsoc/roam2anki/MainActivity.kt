@@ -8,6 +8,8 @@ import android.widget.Button
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.OnRequestPermissionsResultCallback
 import androidx.core.content.ContextCompat
+import androidx.work.*
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity(), OnRequestPermissionsResultCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +21,10 @@ class MainActivity : AppCompatActivity(), OnRequestPermissionsResultCallback {
     }
 
     private fun addCard() {
-            Anki(this).getModels()
+        val uploadWorkRequest = PeriodicWorkRequestBuilder<SyncWork>(1, TimeUnit.HOURS)
+            .build()
+
+        WorkManager.getInstance(this).enqueue(uploadWorkRequest)
     }
 
     private fun ensurePermissions() {
