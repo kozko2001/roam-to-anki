@@ -21,10 +21,10 @@ class MainActivity : AppCompatActivity(), OnRequestPermissionsResultCallback {
     }
 
     private fun addCard() {
-        val uploadWorkRequest = PeriodicWorkRequestBuilder<SyncWork>(1, TimeUnit.HOURS)
+        val syncWork = PeriodicWorkRequestBuilder<SyncWork>(1, TimeUnit.HOURS)
             .build()
 
-        WorkManager.getInstance(this).enqueue(uploadWorkRequest)
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork("Roam2Anki", ExistingPeriodicWorkPolicy.KEEP, syncWork)
     }
 
     private fun ensurePermissions() {
