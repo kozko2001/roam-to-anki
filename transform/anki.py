@@ -37,7 +37,7 @@ def format(flashcards):
     cards = map(
         lambda card: {"type": "cloze", "id": card[1], "text": card[0]}, flashcards
     )
-    return {"decks": {"name": "Roam2Anki", "cards": list(cards)}}
+    return {"decks": [{"name": "Roam2Anki", "cards": list(cards)}]}
 
 
 def main(args):
