@@ -16,9 +16,7 @@ import com.github.kittinunf.fuel.gson.responseObject
 class SyncWork(val context: Context, val params: WorkerParameters): CoroutineWorker(context, params) {
     override suspend fun doWork(): Result
     {
-
         return try {
-
             val (request, response, result) = Fuel.get("https://allocsoc.net/anki/decks.json").responseObject<AnkiJson>()
             val deck = result.get()
             Anki(context).execute(deck);

@@ -24,7 +24,8 @@ class MainActivity : AppCompatActivity(), OnRequestPermissionsResultCallback {
         val syncWork = PeriodicWorkRequestBuilder<SyncWork>(1, TimeUnit.HOURS)
             .build()
 
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork("Roam2Anki", ExistingPeriodicWorkPolicy.KEEP, syncWork)
+         WorkManager.getInstance(this).enqueueUniquePeriodicWork("Roam2Anki", ExistingPeriodicWorkPolicy.KEEP, syncWork)
+//        WorkManager.getInstance(this).enqueue(syncWork)
     }
 
     private fun ensurePermissions() {
