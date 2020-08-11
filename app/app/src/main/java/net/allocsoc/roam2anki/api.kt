@@ -19,7 +19,7 @@ class Roam2AnkiAddContentApi(context: Context) {
     )
 
     fun getAllNotes(): List<Note> {
-        val noteUri = FlashCardsContract.Note.CONTENT_URI
+        val noteUri = FlashCardsContract.Note.CONTENT_URI_V2
         val cursor = mResolver.query(noteUri, PROJECTION, null, null, null)!!
         val result = mutableListOf<Note>()
 
