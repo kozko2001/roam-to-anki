@@ -5,6 +5,8 @@ import argparse
 
 ID_RE = re.compile(""".*\\{\\{\\s*id\\:+\\s*([^\\}]+)\\}\\}.*""", re.IGNORECASE)
 TAG_RE = re.compile(""".*(\#Flashcard|\[\[Flashcard\]\]).*""", re.IGNORECASE)
+MATHJAX = r"\$\$(.*?)\$\$"
+
 
 
 def getIdAndTagOfLine(line):
@@ -25,7 +27,6 @@ def processFile(file):
             r.append((line, id))
     return r
 
-
 def processFolder(folder):
     files = glob.glob(f"{folder}/*.md")
     flashcards = map(processFile, files)
@@ -33,9 +34,16 @@ def processFolder(folder):
     return flashcards
 
 
+def processMath(text):
+    """
+    Translates the support of MathJax we use in Obsidian $$ MATH_HERE $$
+    to the one that anki supports \( MATH_HERE \)
+    """
+    return re.sub(MATHJAX, r"\\(\1\\)", text) 
+
 def format(flashcards):
     cards = map(
-        lambda card: {"type": "cloze", "id": card[1], "text": card[0]}, flashcards
+        lambda card: {"type": "cloze", "id": card[1], "text": processMath(card[0])}, flashcards
     )
     return {"decks": [{"name": "Roam2Anki", "cards": list(cards)}]}
 

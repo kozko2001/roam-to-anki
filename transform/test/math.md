@@ -1,0 +1,1 @@
+-  how can you rewrite $$P(A | B)$$ using Bayes Rule? {{c1::  $$P(A | B) = P(B | A) * \frac {P(A)} {P(B)}$$ }} {{id: 531ecec2-509d-4d73-9799-a774d4f52a8a }} [[FlashCard]]
