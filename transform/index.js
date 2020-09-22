@@ -101,8 +101,10 @@ get_flashcard_data_new = (file) => {
                     .use(containers)
                     .parse(content);
     
-    nodes = [];
-    visit(tree, 'anki', (node) => nodes.push(node));
+    const nodes = [];
+    visit(tree, 'anki', (node) => {
+        nodes.push(node);
+    });
 
     const extractCardFromNode = (node) => {
         const id = node.data.hProperties.className;
