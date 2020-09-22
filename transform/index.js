@@ -1,7 +1,13 @@
 const { glob } = require('glob');
 const fs = require('fs');
+const unified = require('unified');
+const markdown = require('remark-parse');
+const util = require('util');
+const containers = require('remark-containers')
+const visit = require('unist-util-visit');
+const mdatStringify = require('mdast-util-to-string');
 
-var argv = require('yargs')
+const argv = require('yargs')
     .usage('Usage: $0 export [options]')
     .command('export', 'export to roam')
     .example('$0 export -i input_folder -o output_file', 'generates export file from markdowns in folder')
@@ -58,7 +64,6 @@ const get_flashcard_data = (file) => {
 }
 
 const processMath = (flashcard) => {
-    console.log(flashcard)
     const text = flashcard.text;
 
     const mathText = text.replace(/\$\$(.*?)\$\$/g, (a,b) => `\\(${b})\\`);
@@ -74,31 +79,60 @@ const format = (flashcard) => ({
         text: flashcard.text
     });
 
-const main = (output_file, input_folder) => {
-    md_files = markdown_files(input_folder);
-
-    const flashcards = md_files
-            .map(get_flashcard_data)
-            .flat()
-            .map(processMath)
-            .map(format)
-    
+serializeDeck = (flashcards, output_file) => {
     const decks = {
         decks: [
             {
-                "name": "Roam2Anki", 
+                "name": "Roam2Anki",
                 "cards": flashcards
             }
         ]
-    }
+    };
 
     const data = JSON.stringify(decks);
 
     fs.writeFileSync(output_file, data);
+}
 
-    console.log(md_files, decks)
+get_flashcard_data_new = (file) => {
+    const content = fs.readFileSync(file, 'utf8');
+    const tree = unified()
+                    .use(markdown)
+                    .use(containers)
+                    .parse(content);
+    
+    nodes = [];
+    visit(tree, 'anki', (node) => nodes.push(node));
 
+    const extractCardFromNode = (node) => {
+        const id = node.data.hProperties.className;
+        const text = mdatStringify(node);
+
+        return {
+            id,
+            text
+        }
+    }
+
+    return nodes.map(extractCardFromNode);
+}
+
+const main = (output_file, input_folder) => {
+    md_files = markdown_files(input_folder);
+
+    const flashcardsOldFormat = md_files
+            .map(get_flashcard_data)
+            .flat()
+
+    const flashcardNewFormat = md_files
+            .map(get_flashcard_data_new)
+            .flat()
+
+    const flashcards = flashcardNewFormat.concat(flashcardsOldFormat)
+            .map(processMath)
+            .map(format)
+    
+    serializeDeck(flashcards, output_file);
 }
 
 main(argv.o, argv.i)
-
