@@ -95,6 +95,7 @@ serializeDeck = (flashcards, output_file) => {
 }
 
 get_flashcard_data_new = (file) => {
+    console.log("file: ", file)
     const content = fs.readFileSync(file, 'utf8');
     const tree = unified()
                     .use(markdown)
@@ -103,6 +104,7 @@ get_flashcard_data_new = (file) => {
     
     const nodes = [];
     visit(tree, 'anki', (node) => {
+	console.log(node)
         nodes.push(node);
     });
 
