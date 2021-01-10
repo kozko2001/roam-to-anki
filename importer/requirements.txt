@@ -1,0 +1,14 @@
+anki==2.1.38
+beautifulsoup4==4.9.3
+certifi==2020.12.5
+chardet==4.0.0
+decorator==4.4.2
+distro==1.5.0
+idna==2.10
+orjson==3.4.6
+protobuf==3.14.0
+PySocks==1.7.1
+requests==2.25.1
+six==1.15.0
+soupsieve==2.1
+urllib3==1.26.2
