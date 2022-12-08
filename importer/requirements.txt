@@ -1,6 +1,6 @@
 anki==2.1.38
 beautifulsoup4==4.9.3
-certifi==2020.12.5
+certifi==2022.12.7
 chardet==4.0.0
 decorator==4.4.2
 distro==1.5.0
